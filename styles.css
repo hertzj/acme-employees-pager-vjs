@@ -1,0 +1,34 @@
+.user {
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid black;
+    margin: 1rem 0;
+    padding: 1rem 0;
+}
+
+.user div {
+    flex: 1;
+}
+
+.hidden {
+    display: none;
+}
+
+.pageControls {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 2rem;
+}
+
+.userHeader {
+    display: flex;
+    justify-content: space-between;
+    background-color: dodgerblue;
+    color: white;
+    padding: 5px;
+    margin-bottom: 3px;
+}
+
+.userHeader div {
+    flex: 1;
+}

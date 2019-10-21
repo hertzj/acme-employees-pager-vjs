@@ -1,75 +1,66 @@
-const fetchData = async() => {
-    const location = window.location.hash ? 1*window.location.hash.slice(1) : 0;
+const fetchData = () => {
+    const idx = window.location.hash ? 1 * window.location.hash.slice(1) : 0;
+    return fetch(`https://acme-users-api-rev.herokuapp.com/api/users${idx ? `/${idx}` : '' }`)
+        .then(response => response.json())
+        .then(data => {
+            const {users, count} = data
+            renderUsers(users)
+            renderPager(idx, count)
+        })
+};
 
-    const response = await fetch(`https://acme-users-api-rev.herokuapp.com/api/users`);
-    const data = await response.json();
-    let {users, count} = data;
-
-    // while (count > 0) {
-    //     count -= 50;
-    //     let pgNum = 1;
-    //     response = await fetch((`https://acme-users-api-rev.herokuapp.com/api/users/${pgNum}`));
-    //     pgNum++;
-    // }
-
-    renderUsers(users)
-    renderPager(count, location);
-}
-
-const userList = document.querySelector('#userList')
 const pager = document.querySelector('#pager');
+const usersList = document.querySelector('#usersList');
 
+const renderUsers = users => {
+    // const html = users.map(user => 
+    //     // eslint-disable-next-line no-unused-expressions
+    //      `<div>
+    //         <ul>
+    //             <li>${user.firstName}</li>
+    //             <li>${user.lastName}</li>
+    //             <li>${user.email}</li>
+    //             <li>${user.title}</li>
+    //         </ul>
+    //     </div>`
+    // ).join('')
 
-
-
-
-const renderUsers = (userData) => {
-     
-    const HTML = userData.map(user => {
-        return `<div class='user'>
-        <ul>
-            <li>${user.firstName}</li>
-            <li>${user.lastName}</li>
-            <li>${user.email}</li>
-            <li>${user.title}</li>
-        </ul>
-    </div>`
-        
-    }).join()
-
-    userList.innerHTML = HTML;
-}
-
-const html = `<ul>
-<li><a href="${window.location.href}#">First</a></li>
-<li><a href="${window.location.href}#${location++}"></a>Next</li>
-<li>${location}</li>
-<li><a href="${window.location.href}#${location--}"></a>Previous</li>
-<li><a href="${window.location.href}#${Math.ceil(count / 50)}"></a></li>
-</ul>`
-
-pager.innerHTML = html;
-
-const renderPager = (num, location) => {
-    // add eventlistener for change in hash
-
-    // const html = `<ul>
-    // <li><a href="${window.location.href}#">First</a></li>
-    // <li><a href="${window.location.href}#${location++}"></a>Next</li>
-    // <li>${location}</li>
-    // <li><a href="${window.location.href}#${location--}"></a>Previous</li>
-    // <li><a href="${window.location.href}#${Math.ceil(count / 50)}"></a></li>
-    // </ul>`
-
-    // pager.innerHTML = html;
-
+    const html = users.map(user => 
+        // eslint-disable-next-line no-unused-expressions
+         `<div class = 'user'>
+                <div>${user.firstName}</div>
+                <div>${user.lastName}</div>
+                <div>${user.email}</div>
+                <div>${user.title}</div>
+        </div>`
+    ).join('')
+    usersList.innerHTML =
+    `<div class='userHeader'>
+    <div>First Name</div>
+    <div>Last Name</div>
+    <div>Email</div>
+    <div>Title</div>
+    </div>
+    ${html}`
     
-    // const response = await fetch(`https://acme-users-api-rev.herokuapp.com/api/users/${location}`)
-    // const data = await response.json();
-    // const {users, count} = data;
-
-    // renderUsers(users);
 }
+
+const renderPager = (idx, count) => {
+    const html = `
+    <a href="#">First</a>
+    <a ${idx ? '' : 'class = hidden'} href="#${idx - 1}">Previous</a>
+    <span>${idx + 1}</span>
+    <a ${idx >= Math.floor(count / 50) ? 'class = hidden' : ''} href="#${idx + 1}">Next</a>
+    <a ${idx >= Math.floor(count / 50) ? 'class = hidden' : ''} href="#${Math.floor(count / 50)}">Last</a>
+    `
+    pager.innerHTML = `<div class = 'pageControls'>
+        ${html}
+        </div>`
+}
+
+window.addEventListener('hashchange', ev => {
+    fetchData();
+})
+
 
 fetchData()
-// renderPager()
